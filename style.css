@@ -1,0 +1,18 @@
+body{
+    margin-top: 40px;
+    margin-left: 40px
+}
+
+#banka{
+    border-left: none;
+    width: 197px;
+    height: 192px;
+    margin-left: 178px;
+    margin-top: 35px;    
+}
+button{    
+    background-color: rgb(221,79,5);
+    /* border: rgb(221,79,5); */
+    width: 197px;
+    height: 192px;
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+</head>
+<body style="background-image: url(image/background.PNG); background-repeat: no-repeat; background-size: 1350px; background-attachment: fixed;">
+    
+    <nav class="navbar bg-primary p-3" data-bs-theme="dark">    
+        <button  class="text-bg-se p-3 rounded-3" id="signOutBtn">Sign out</button>
+        <h1 id="display" class="text-danger"> WELCOME TO GOOGLE CHAT STUDIOOOOO</h1>    
+        </nav> <br><br>
+
+        
+        <div style="border: 0px solid; width: 400px; margin-left: 200px">
+                <div  class="card bg-info" style="width: 18rem;">                        
+                            <div id="show"></div>                                      
+                </div>   
+
+                <input class="text-dark p-3 rounded-3" type="text" placeholder="INPUT CHAT MSG" id="sn"> 
+                <button class="text-bg-danger p-3 rounded-3" id="sendChat">CHAT NOW</button>
+        </div>  
+
+        
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.20.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.20.0/firebase-auth.js";
+        import { getDatabase, ref,set, onValue} from "https://www.gstatic.com/firebasejs/9.20.0/firebase-database.js";
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBHvgKABhGqTV7Fct6YvcuWXo8djtj1QY0",
+            authDomain: "fireassign-299a1.firebaseapp.com",
+            projectId: "fireassign-299a1",
+            storageBucket: "fireassign-299a1.appspot.com",
+            messagingSenderId: "616567860486",
+            appId: "1:616567860486:web:f18db49595c2c169bd4287",
+            databaseURL: "https://fireassign-299a1-default-rtdb.firebaseio.com"
+        };
+   
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth()
+        const database = getDatabase(app);
+        let todoIndex = 0
+
+        onAuthStateChanged(auth, (user)=>{
+            if(user){
+                console.log(user);
+            }else{
+                window.location.href = "index.html"
+            }
+        })
+        
+        signOutBtn.addEventListener("click", ()=>{
+            signOut(auth)
+            .then(()=>{
+                console.log("Sign out");
+                window.location.href = "index.html"
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+        })
+        
+        sendChat.addEventListener("click", ()=>{
+        let date = new Date()
+        let theUser = auth.currentUser.displayName
+        let chatRise = {
+            message: sn.value,
+            time: date.toLocaleTimeString(),
+            username: theUser            
+        }   
+
+            console.log(chatRise);
+            // message = ""
+                       
+            let databaseref = ref(database, `chats/${todoIndex}`)
+            set(databaseref, chatRise)
+
+            // localStorage.setItem("chats", chatRise)
+        })
+
+        let databaseref = ref(database, "chats")
+        onValue(databaseref, (snapshot)=>{
+            show.innerHTML = ""
+            let data = snapshot.val()
+            console.log(data)
+            todoIndex = data.length
+            console.log(todoIndex);
+
+            // for (let index = 0; index < databaseref.length; index++) {
+            //     show.innerHTML += `<h1>(${data[0]})</h1>`                
+            // }
+            data.map((item,index)=>{
+                display.innerHTML = `<h1>${item.username} YOU ARE WELCOME TO GOOGLE CHAT</h1>`
+                show.innerHTML += `                
+                <div class="card bg-info" style="width: 18rem;">                
+                        <p>${index+1}</p>
+                        <p>${item.username}</p>
+                        <p>${item.message}</p>  
+                        <p>${item.time}</p>                              
+                </div>
+                `
+            })
+        })
+    </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+</body>
+</html>
